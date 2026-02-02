@@ -18,6 +18,10 @@ mongoose.connect(process.env.MONGO_URI)
     console.error("❌ MongoDB Connection Error:");
     console.error(err.message);
   });
+  // الترحيب في الصفحة الرئيسية
+app.get('/', (req, res) => {
+    res.json({ message: "Welcome to my CRUD API! use /api/products to see data." });
+});
 // Routes
 const productRoutes = require('./router/products');
 app.use('/api/products', productRoutes);
