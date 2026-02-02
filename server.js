@@ -11,17 +11,25 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
+// MongoDB Connection with better error handling
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+})
   .then(() => console.log("✅ MongoDB Connected Successfully!"))
   .catch((err) => {
     console.error("❌ MongoDB Connection Error:");
-    console.error(err.message);
+    console.error(err);
   });
-  // الترحيب في الصفحة الرئيسية
+
+// الترحيب في الصفحة الرئيسية
 app.get('/', (req, res) => {
-    res.json({ message: "Welcome to my CRUD API! use /api/products to see data." });
+  res.json({ 
+    message: "Welcome to my CRUD API! use /api/products to see data.",
+    mongoStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+  });
 });
+
 // Routes
 const productRoutes = require('./router/products');
 app.use('/api/products', productRoutes);
